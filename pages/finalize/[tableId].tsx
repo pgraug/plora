@@ -18,7 +18,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
-import JSONstat from "jsonstat-toolkit";
+const JSONstat = require("jsonstat-toolkit");
 import Card from '@material-ui/core/Card';
 
 
