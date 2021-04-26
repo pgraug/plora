@@ -1,65 +1,95 @@
 import Head from 'next/head'
-import styles from '../styles/View.module.css'
+import styles from '../../styles/View.module.css'
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+import React from 'react';
+import ChartComponent from 'react-chartjs-2';
+import { firestore } from '../../utils/db';
+import Box from '@material-ui/core/Box';
+import Card from '@material-ui/core/Card';
 
-export default function View() {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+// plora.xyz/view/dfbidfsdfnsdlkfbhk
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+export default function View({data}) {
+    
+	console.log(data.data);
+	
+	const [state, setState] = React.useState({
+        loaded: false
+    });
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+	React.useEffect(() => {
+		setState({ ...state, loaded: true});
+	}, [])
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+	return (
+        <Container maxWidth="lg" className={styles.container}>
+			
+			
+			{ !state.loaded ? (
+                <Box className={styles.loadWrapper}>
+                    <Typography variant="h4" className={styles.loadTitle}>Loader...</Typography>
+                </Box>
+            ) : (
+                <React.Fragment>
+					<Card className={styles.card}>
+						<ChartComponent
+							type={data.type}
+							data={data.data}
+							options={{
+								plugins: {
+									title: {
+										display: true,
+										text: data.title,
+										font: {
+											size: 24,
+										},
+									},
+								},
+								scales: {
+									x: {
+										title: {
+											display: true,
+											text: data.xLabel
+										}
+									},
+									y: {
+										title: {
+											display: true,
+											text: data.yLabel
+										}
+									},
+								},
+								elements: {
+									point: {
+										radius: 4,
+										hoverRadius: 5
+									}
+								}
+							}}
+						/>
+					</Card>
+                    <Paper className={styles.main}>
+				<Typography variant="h4">Indstillinger</Typography>
+			</Paper>
+                </React.Fragment>
+            )}
+        </Container>
+	)	
+}
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+export async function getServerSideProps(context) {
+    let ploraId = context.params.ploraId
+	let data = {}
+	const doc = await firestore.collection("ploras").doc(ploraId).get();
+	if (!doc.exists) {
+	console.log('No such document!');
+	} else {
+	data = doc.data()
+	}
+	return {
+		props: { data }, // will be passed to the page component as props
+	}
 }

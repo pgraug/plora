@@ -1,0 +1,56 @@
+.container {
+    margin-top: 4.5rem;
+}
+
+.main {
+	margin-top: 2.2rem;
+	margin-bottom: 5rem;
+	padding: 2.3rem;
+	min-height: 30rem;
+}
+
+.diagramTypeTitle {
+	text-align: center;
+    clear: both;
+    margin-bottom: 6px !important;
+}
+
+.diagramTypeWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    flex-wrap: wrap;
+}
+
+.diagramTypeButtonWrapper {
+    clear: both;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.diagramTypeButton {
+    margin: 8px 6px !important;
+}
+
+.chartTitleInput {
+	min-width: 16rem !important;
+	margin-top: 0.8rem !important;
+}
+
+.formControl {
+	min-width: 16rem !important;
+	margin-top: 0.8rem !important;
+}
+
+.valList {
+
+}
+
+.releaseBtn {
+    margin-top: 0.8rem !important;
+}
+
+.card {
+	padding: 1.2rem !important;
+}
