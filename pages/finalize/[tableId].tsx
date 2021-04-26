@@ -19,7 +19,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
 import Card from '@material-ui/core/Card';
-import JSONstat from "jsonstat-toolkit";
 
 
 // plora.xyz/finalize/dst-regr63
@@ -94,6 +93,17 @@ export default function Finalize({tableData}) {
         });
     };
 
+    const getCombn = (arr, pre?) => {
+        pre = pre || '';
+        if (!arr.length) {
+            return pre;
+        }
+        var ans = arr[0].reduce(function(ans, value) {
+            return ans.concat(getCombn(arr.slice(1), pre + value));
+        }, []);
+        return ans;
+    }
+
     const getData = () => {
         if (state.xVal.length > 0 && state.yVal.length > 0) {
             let reqURL = "https://api.statbank.dk/v1/data/" + tableData.id + "/JSONSTAT?timeOrder=Ascending"
@@ -122,25 +132,23 @@ export default function Finalize({tableData}) {
                     }
                     return res.json();
                 }).then(res => {
-                    let ds = JSONstat(res).Dataset( 0 )
-                    let labels = ds.Dimension(tableData.variables[state.xVar].id).Category().map(x => x.label)
-                    let valueIndex = ds.toTable( { type: "arrayobj" } )[0].indexOf("Value")
-                    let indholdIndex = ds.toTable( { type: "arrayobj" } )[0].indexOf("Indhold")
-                    let xIndex = ds.toTable( { type: "arrayobj" } )[0].findIndex(el => el.toLowerCase() === tableData.variables[state.xVar].id.toLowerCase())
-                    let yIndex = ds.toTable( { type: "arrayobj" } )[0].findIndex(el => el.toLowerCase() === tableData.variables[state.yVar].id.toLowerCase())
-                    console.log("index: ", valueIndex, indholdIndex, xIndex, yIndex);
-                    console.log(ds.toTable( { type: "arrayobj" } ));
-                    //console.log(ds.Data({PRISENHED: "V_M", TRANSAKT: "B1GQK"}));
-                    //console.log(ds.Dimension(tableData.variables[state.xVar].id));
-                    console.log(chunkArray(ds.toTable( { type: "arrayobj" } ).slice(1), labels.length));
-                    console.log(chunkArray(ds.toTable( { type: "arrayobj" } ).slice(1), labels.length)[0]/*her fra*/[0].filter((x,i) => i !== valueIndex && i !== indholdIndex && i !== xIndex && i !== yIndex));
+                    console.log("raw: ", res);
+                    
+
+                    let indholdIndex = res.dataset.dimension.id.indexOf("ContentsCode")
+                    let xIndex = res.dataset.dimension.id.findIndex(el => el.toLowerCase() === tableData.variables[state.xVar].id.toLowerCase())
+                    let yIndex = res.dataset.dimension.id.findIndex(el => el.toLowerCase() === tableData.variables[state.yVar].id.toLowerCase())
+                    //console.log("ny:", indholdIndex, xIndex, yIndex)
+                    //console.log("ny:", chunkArray(res.dataset.value, res.dataset.dimension.size[xIndex])) //virker
+                    let unpollinated = res.dataset.dimension.id.filter((x,i) => i !== indholdIndex && i !== xIndex && i !== yIndex).map(id => Object.entries(res.dataset.dimension[id].category.index).sort((a, b) => a[1] - b[1]).map(indx => res.dataset.dimension[id].category.label[indx[0]]))
+                    let pollinated = unpollinated.reduce((a, b) => a.reduce((r, v) => r.concat(b.map(w => [].concat(v, w))), [])).map(arr => typeof arr === "object" ? arr.join(" / ") : arr)
                     
                     let chartData = {
-                        labels: labels,
-                        datasets: chunkArray(ds.toTable( { type: "arrayobj" } ).slice(1), labels.length).map((dset, i) => {
+                        labels: Object.values(res.dataset.dimension[res.dataset.dimension.id[xIndex]].category.label),
+                        datasets: chunkArray(res.dataset.value, res.dataset.dimension.size[xIndex]).map((dset, i) => {
                             return {
-                                label: dset[0].filter((x,i) => i !== valueIndex && i !== indholdIndex && i !== xIndex && i !== yIndex).join(" / "),
-                                data: dset.map(d => d[valueIndex]),
+                                label: pollinated[i],
+                                data: dset,
                                 fill: false,
                                 backgroundColor: "rgb(" + colorscheme[i % 10].join(", ") + ")",
                                 borderColor: "rgb(" + colorscheme[i % 10].join(", ") + ", 0.2)",
@@ -149,8 +157,6 @@ export default function Finalize({tableData}) {
                     }
                     console.log(chartData);
                     setState({ ...state, chartData: chartData, dataHelpText: "Færdig. Rul op for at se grafen."});
-
-                    
                     
                 }).catch(err => {
                     console.log(err);
@@ -189,9 +195,6 @@ export default function Finalize({tableData}) {
                 console.log(err);
             });
     }
-
-    //console.log(tableData);
-    
 	
 	return (
         <Container maxWidth="lg" className={styles.container}>

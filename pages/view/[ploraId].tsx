@@ -8,6 +8,7 @@ import ChartComponent from 'react-chartjs-2';
 import { firestore } from '../../utils/db';
 import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
+import { useRouter } from 'next/router';
 
 
 // plora.xyz/view/dfbidfsdfnsdlkfbhk
@@ -15,6 +16,9 @@ import Card from '@material-ui/core/Card';
 export default function View({data}) {
     
 	console.log(data.data);
+
+	const router = useRouter()
+	const { ploraId } = router.query
 	
 	const [state, setState] = React.useState({
         loaded: false
