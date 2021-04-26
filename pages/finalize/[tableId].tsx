@@ -18,8 +18,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
-const JSONstat = require("jsonstat-toolkit");
 import Card from '@material-ui/core/Card';
+import JSONstat from "jsonstat-toolkit";
 
 
 // plora.xyz/finalize/dst-regr63
