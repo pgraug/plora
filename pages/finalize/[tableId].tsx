@@ -25,7 +25,8 @@ import Card from '@material-ui/core/Card';
 
 export default function Finalize({tableData}) {
 	const router = useRouter()
-	const { tableId } = router.query
+	const tableId:string = router.query.tableId as string
+
     const [state, setState] = React.useState({
         chartType: "",
         chartTitle: tableData.text,
@@ -140,7 +141,7 @@ export default function Finalize({tableData}) {
                     let yIndex = res.dataset.dimension.id.findIndex(el => el.toLowerCase() === tableData.variables[state.yVar].id.toLowerCase())
                     //console.log("ny:", indholdIndex, xIndex, yIndex)
                     //console.log("ny:", chunkArray(res.dataset.value, res.dataset.dimension.size[xIndex])) //virker
-                    let unpollinated = res.dataset.dimension.id.filter((x,i) => i !== indholdIndex && i !== xIndex && i !== yIndex).map(id => Object.entries(res.dataset.dimension[id].category.index).sort((a, b) => a[1] - b[1]).map(indx => res.dataset.dimension[id].category.label[indx[0]]))
+                    let unpollinated = res.dataset.dimension.id.filter((x,i) => i !== indholdIndex && i !== xIndex && i !== yIndex).map(id => Object.entries(res.dataset.dimension[id].category.index).sort((a: any[], b: any[]) => a[1] - b[1]).map(indx => res.dataset.dimension[id].category.label[indx[0]]))
                     let pollinated = unpollinated.reduce((a, b) => a.reduce((r, v) => r.concat(b.map(w => [].concat(v, w))), [])).map(arr => typeof arr === "object" ? arr.join(" / ") : arr)
                     
                     let chartData = {
