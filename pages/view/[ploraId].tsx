@@ -115,8 +115,8 @@ export default function View({data}) {
 								<Typography gutterBottom variant="h5" component="h2">
 									Del "{data.title}" eller lav din egen plora.
 								</Typography>
-								<Typography variant="body2" color="textSecondary" component="p">
-									Plora gør statistik overskueligt. Del denne plora med andre eller lav en ny.
+								<Typography variant="body2" component="p">
+									Plora gør tung statistik overskueligt. Del denne plora med andre eller prøv selv at lave en.
 								</Typography>
 							</CardContent>
 						</CardActionArea>

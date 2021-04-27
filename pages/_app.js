@@ -46,21 +46,7 @@ const theme = createMuiTheme({
 	spacing: 8,
 });
 
-/*const useStyles = makeStyles((theme) => ({
-	root: {
-	  	flexGrow: 1,
-	},
-	menuButton: {
-	  	marginRight: 16,
-	},
-	title: {
-	  	flexGrow: 1,
-	},
-  }));*/
-
-
 function PloraApp({ Component, pageProps }) {
-	//const classes = useStyles();
 	
 	return (
 		<React.Fragment>
@@ -74,21 +60,11 @@ function PloraApp({ Component, pageProps }) {
 				<div className={"root"}>
 					<AppBar position="static" color="transparent" elevation={0}>
 						<Toolbar>
-							{/*<IconButton edge="start" className={"menu-button"} color="inherit" aria-label="menu">
-								<MenuIcon />
-							</IconButton>*/}
-							
 							<Typography variant="h6" className={"appbar-title"}>
 								<Link href={"/"}>
 									plora.
 								</Link>
 							</Typography>
-							{/*<Link
-								href={"/create"}
-								passHref
-								className={"appbar-button-right"}>
-								<Button style={{textTransform: "unset", backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText}}>Opret en plora</Button>
-							</Link>*/}
 						</Toolbar>
 					</AppBar>
 				</div>
