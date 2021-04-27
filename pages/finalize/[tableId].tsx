@@ -196,9 +196,12 @@ export default function Finalize({tableData}) {
                 console.log(err);
             });
     }
-	
+    
 	return (
         <Container maxWidth="lg" className={styles.container}>
+            <Head>
+				<title>Udvælg data | plora.</title>
+			</Head>
             { !state.chartType.length ? (
                 <Box className={styles.diagramTypeWrapper}>
                     <Typography variant="h4" className={styles.diagramTypeTitle}>Vælg en diagramtype</Typography>

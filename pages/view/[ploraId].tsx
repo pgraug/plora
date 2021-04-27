@@ -9,20 +9,47 @@ import { firestore } from '../../utils/db';
 import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
 import { useRouter } from 'next/router';
+import { type } from 'node:os';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
+import Link from 'next/link';
 
 
 // plora.xyz/view/dfbidfsdfnsdlkfbhk
 
 export default function View({data}) {
     
-	console.log(data.data);
+	console.log(data);
 
 	const router = useRouter()
 	const { ploraId } = router.query
 	
 	const [state, setState] = React.useState({
-        loaded: false
+        loaded: false,
+		copied: false
     });
+
+	const copyToClipboard = str => {
+		const el = document.createElement('textarea');
+		el.value = str;
+		document.body.appendChild(el);
+		el.select();
+		document.execCommand('copy');
+		document.body.removeChild(el);
+		setState({ ...state, copied: true})
+	};
+
+	const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+		if (reason === 'clickaway') {
+		  return;
+		}
+	
+		setState({ ...state, copied: false})
+	};
 
 	React.useEffect(() => {
 		setState({ ...state, loaded: true});
@@ -35,9 +62,15 @@ export default function View({data}) {
 			{ !state.loaded ? (
                 <Box className={styles.loadWrapper}>
                     <Typography variant="h4" className={styles.loadTitle}>Loader...</Typography>
+					<Head>
+						<title>plora.</title>
+					</Head>
                 </Box>
             ) : (
                 <React.Fragment>
+					<Head>
+						<title>{data.title + " | plora."}</title>
+					</Head>
 					<Card className={styles.card}>
 						<ChartComponent
 							type={data.type}
@@ -74,10 +107,44 @@ export default function View({data}) {
 								}
 							}}
 						/>
+						<Typography variant="body2" color="textSecondary">Kilde: Danmarks Statistik ({data.tableId}) via plora.</Typography>
 					</Card>
-                    <Paper className={styles.main}>
-				<Typography variant="h4">Indstillinger</Typography>
-			</Paper>
+					<Card className={styles.main}>
+						<CardActionArea>
+							<CardContent>
+								<Typography gutterBottom variant="h5" component="h2">
+									Del "{data.title}" eller lav din egen plora.
+								</Typography>
+								<Typography variant="body2" color="textSecondary" component="p">
+									Plora gør statistik overskueligt. Del denne plora med andre eller lav en ny.
+								</Typography>
+							</CardContent>
+						</CardActionArea>
+						<CardActions>
+							<Button size="small" color="secondary" onClick={() => copyToClipboard("https://plora.xyz/view/" + ploraId)}>
+								Kopier link
+							</Button>
+							<Link
+								href={"/finalize/" + data.providerId + "-" + data.tableId}
+								passHref>
+								<Button size="small" color="secondary">
+									Ny fra denne tabel
+								</Button>
+							</Link>
+							<Link
+								href={"/create"}
+								passHref>
+								<Button size="small" color="secondary">
+									Begynd fra bunden
+								</Button>
+							</Link>
+						</CardActions>
+					</Card>
+					<Snackbar open={state.copied} autoHideDuration={3000} onClose={handleClose}>
+						<Alert variant="filled" onClose={handleClose} severity="success">
+							Linket blev kopieret til udklipsholderen
+						</Alert>
+					</Snackbar>
                 </React.Fragment>
             )}
         </Container>

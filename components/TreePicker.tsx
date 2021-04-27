@@ -73,7 +73,7 @@ export default function TreePicker({children, provider}) {
                     <Link
                         href={"/finalize/" + provider + "-" + state.selected.toLowerCase()}
                         passHref>
-                            <Button variant="contained" color="secondary" size="small">
+                        <Button variant="contained" color="secondary" size="small">
                             Benyt denne tabel
                         </Button>
                     </Link>

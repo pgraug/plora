@@ -29,6 +29,9 @@ export default function Create({subjectTableData}) {
 	
 	return (
 		<Container maxWidth="md" className={styles.container}>
+			<Head>
+				<title>Vælg tabel | plora.</title>
+			</Head>
 			<Typography variant="h1" className={styles.title}>Lav din egen plora.</Typography>
 			<Paper className={styles.main} elevation={3}>
 				<Typography variant="body1">OBS: Da plora stadig er i beta, er det endnu kun muligt at indhente data fra Danmarks Statistik.</Typography>
